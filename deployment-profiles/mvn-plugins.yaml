@@ -44,11 +44,11 @@ jobs:
           steps:
             - ${{ parameters.mandatoryTasks }}
 
+            - template: ../steps/export-scripts-path.yaml
+
             - download: ${{ parameters.artifactAlias }}
               artifact: ${{ parameters.artifactName }}
               displayName: Download ${{ parameters.artifactName }}
-
-            - template: ../steps/export-scripts-path.yaml
 
             - task: CopyFiles@2
               displayName: Copy Artifacts to Build Sources Directory
