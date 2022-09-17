@@ -1,0 +1,44 @@
+parameters:
+  - name: preBuildStageName
+    type: string
+    default: PreBuild
+  - name: preBuildStageDisplayName
+    type: string
+    default: PreBuild
+  - name: buildStageName
+    type: string
+    default: Build
+  - name: buildStageDisplayName
+    type: string
+    default: Build
+  - name: variableGroups
+    type: object
+    default: []
+  - name: buildProfile
+    type: string
+
+resources:
+  repositories:
+    - repository: scripts
+      type: github
+      name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
+      ref: main
+      endpoint: ShehabEl-DeenAlalkamy
+
+stages:
+  - stage: ${{ parameters.preBuildStageName }}
+    displayName: ${{ parameters.preBuildStageDisplayName }}
+    jobs:
+      - template: job-groups/systems-checks.yaml
+
+  - stage: ${{ parameters.buildStageName }}
+    displayName: ${{ parameters.buildStageDisplayName }}
+    condition: |
+      succeeded('${{ parameters.preBuildStageName }}')
+    dependsOn:
+      - ${{ parameters.preBuildStageName }}
+    variables:
+      - ${{ each variableGroup in parameters.variableGroups }}:
+          - group: ${{ variableGroup }}
+    jobs:
+      - template: build-profiles/${{ parameters.buildProfile }}.yaml

@@ -1,0 +1,73 @@
+parameters:
+  - name: jobName
+    type: string
+    default: FuncTesting
+  - name: displayName
+    type: string
+    default: Functional Testing
+  - name: artifactAlias
+    type: string
+  - name: artifactName
+    type: string
+  - name: dependsOn
+    type: object
+    default: []
+  - name: mandatoryTasks
+    type: stepList
+    default: []
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn:
+      - ${{ each dependency in parameters.dependsOn }}:
+          - ${{ dependency }}
+    steps:
+      - ${{ parameters.mandatoryTasks }}
+
+      - template: ../steps/export-scripts-path.yaml
+
+      - download: ${{ parameters.artifactAlias }}
+        artifact: ${{ parameters.artifactName }}
+        displayName: Download ${{ parameters.artifactName }}
+
+      - task: CopyFiles@2
+        displayName: Copy Artifacts to Build Sources Directory
+        inputs:
+          SourceFolder: $(Pipeline.Workspace)/${{ parameters.artifactAlias }}/${{ parameters.artifactName }}
+          Contents: "**"
+          TargetFolder: $(Build.SourcesDirectory)
+          OverWrite: true
+
+      - task: NodeTool@0
+        displayName: Install Node 18.0.0
+        inputs:
+          versionSpec: 18.0.0
+
+      - task: Npm@1
+        displayName: npm install
+        inputs:
+          verbose: false
+
+      - task: Bash@3
+        displayName: "FT: CucumberJS"
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/cucmberjs-ftest.sh
+        env:
+          SOURCE_PATH: $(Build.SourcesDirectory)/target/test/integration
+
+      - task: PublishTestResults@2
+        displayName: Consume FT Results
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: "**/*.xml"
+          searchFolder: $(Build.ArtifactStagingDirectory)/functional-testing
+          failTaskOnFailedTests: true
+
+      - task: Bash@3
+        displayName: Artifacts Cleaning
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+          arguments: -a functional-testing

@@ -1,0 +1,4 @@
+jobs:
+  - template: ../jobs/sca.yaml
+
+  - template: ../jobs/unit-testing.yaml

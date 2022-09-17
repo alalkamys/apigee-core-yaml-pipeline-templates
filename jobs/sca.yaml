@@ -1,0 +1,64 @@
+parameters:
+  - name: jobName
+    type: string
+    default: StaticCodeAnalysis
+  - name: displayName
+    type: string
+    default: Static Code Analysis
+  - name: dependsOn
+    type: object
+    default: []
+  - name: mandatoryTasks
+    type: stepList
+    default: []
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn:
+      - ${{ each dependency in parameters.dependsOn }}:
+          - ${{ dependency }}
+    steps:
+      - ${{ parameters.mandatoryTasks }}
+
+      - template: ../steps/export-scripts-path.yaml
+
+      - checkout: self
+        path: s
+        persistCredentials: true
+
+      - task: NodeTool@0
+        displayName: Install Node 18.0.0
+        inputs:
+          versionSpec: 18.0.0
+
+      - task: Npm@1
+        displayName: npm install
+        inputs:
+          command: install
+
+      - task: Bash@3
+        displayName: "SCA: Proxy Bundle"
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/apigeelint-scan.sh
+
+      - task: Bash@3
+        displayName: "SCA: JavaScript Resources"
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
+
+      - task: PublishTestResults@2
+        displayName: Consume SCA Results
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: "**/*.xml"
+          searchFolder: $(Build.ArtifactStagingDirectory)/sca
+          failTaskOnFailedTests: true
+
+      - task: Bash@3
+        displayName: Artifacts Cleaning
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+          arguments: -a sca

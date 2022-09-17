@@ -1,0 +1,61 @@
+parameters:
+  - name: jobName
+    type: string
+    default: ApigeeMvnBuild
+  - name: displayName
+    type: string
+    default: Apigee Maven Build
+  - name: dependsOn
+    type: object
+    default: []
+  - name: mandatoryTasks
+    type: stepList
+    default: []
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn:
+      - ${{ each dependency in parameters.dependsOn }}:
+          - ${{ dependency }}
+    steps:
+      - ${{ parameters.mandatoryTasks }}
+
+      - template: ../steps/export-scripts-path.yaml
+
+      - checkout: self
+        path: s
+        persistCredentials: true
+
+      - task: Maven@3.205.1
+        displayName: Proxy Bundle Package
+        inputs:
+          mavenPomFile: "./pom.xml"
+          mavenOptions: "-Xmx3072m"
+          javaHomeOption: "JDKVersion"
+          jdkVersionOption: "1.8"
+          jdkArchitectureOption: "x64"
+          publishJUnitResults: false
+          options: -P googleapi -D deployment.description=${PROXY_DESC}
+          goals: package
+        env:
+          PROXY_DESC: $(proxyDesc)
+
+      - task: Bash@3
+        name: ArtifactsStagingStep
+        displayName: Artifacts Staging
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/mvn-artifacts-staging.sh
+
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish: Proxy Bundle Artifacts"
+        inputs:
+          pathToPublish: $(Build.ArtifactStagingDirectory)/proxy-bundle-artifacts
+          artifactName: proxy-bundle-artifacts
+
+      - task: Bash@3
+        displayName: Artifacts Cleaning
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+          arguments: -a proxy-bundle-artifacts

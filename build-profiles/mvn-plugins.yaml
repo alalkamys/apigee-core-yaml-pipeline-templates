@@ -1,0 +1,2 @@
+jobs:
+  - template: ../jobs/apigee-mvn-plugin.yaml
