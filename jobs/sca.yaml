@@ -32,10 +32,11 @@ jobs:
           echo BUILD_SOURCESDIRECTORY: "${BUILD_SOURCESDIRECTORY}"
           echo BUILD_REPOSITORY_LOCALPATH: "${BUILD_REPOSITORY_LOCALPATH}"
           echo PIPELINE_WORKSPACE: "${PIPELINE_WORKSPACE}"
+          echo FRAMEWORK_CONFIG_PATHTOSCRIPTS: "${FRAMEWORK_CONFIG_PATHTOSCRIPTS}"
           echo "-> ls"
           ls
-          echo "-> ls scripts"
-          ls scripts
+          echo "-> ls ${FRAMEWORK_CONFIG_PATHTOSCRIPTS}"
+          ls "${FRAMEWORK_CONFIG_PATHTOSCRIPTS}"
           echo "-> ls ${PIPELINE_WORKSPACE}"
           ls "${PIPELINE_WORKSPACE}"
         displayName: Scout Agent Vision
