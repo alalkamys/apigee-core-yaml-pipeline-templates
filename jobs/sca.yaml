@@ -20,59 +20,45 @@ jobs:
           - ${{ dependency }}
     steps:
       - ${{ parameters.mandatoryTasks }}
-      
+
       - template: ../steps/export-scripts-path.yaml
-      
+
       - checkout: self
         path: s
         persistCredentials: true
-      
-      - script: |
-          echo working dir: $(pwd)
-          echo BUILD_SOURCESDIRECTORY: "${BUILD_SOURCESDIRECTORY}"
-          echo BUILD_REPOSITORY_LOCALPATH: "${BUILD_REPOSITORY_LOCALPATH}"
-          echo PIPELINE_WORKSPACE: "${PIPELINE_WORKSPACE}"
-          echo FRAMEWORK_CONFIG_PATHTOSCRIPTS: "${FRAMEWORK_CONFIG_PATHTOSCRIPTS}"
-          echo "-> ls"
-          ls
-          echo "-> ls ${FRAMEWORK_CONFIG_PATHTOSCRIPTS}"
-          ls "${FRAMEWORK_CONFIG_PATHTOSCRIPTS}"
-          echo "-> ls ${PIPELINE_WORKSPACE}"
-          ls "${PIPELINE_WORKSPACE}"
-        displayName: Scout Agent Vision
 
-      # - task: NodeTool@0
-      #   displayName: Install Node 18.0.0
-      #   inputs:
-      #     versionSpec: 18.0.0
+      - task: NodeTool@0
+        displayName: Install Node 18.0.0
+        inputs:
+          versionSpec: 18.0.0
 
-      # - task: Npm@1
-      #   displayName: npm install
-      #   inputs:
-      #     command: install
+      - task: Npm@1
+        displayName: npm install
+        inputs:
+          command: install
 
-      # - task: Bash@3
-      #   displayName: "SCA: Proxy Bundle"
-      #   inputs:
-      #     filePath: $(Framework.Config.PathToScripts)/apigeelint-scan.sh
+      - task: Bash@3
+        displayName: "SCA: Proxy Bundle"
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/apigeelint-scan.sh
 
-      # - task: Bash@3
-      #   displayName: "SCA: JavaScript Resources"
-      #   inputs:
-      #     filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
+      - task: Bash@3
+        displayName: "SCA: JavaScript Resources"
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
 
-      # - task: PublishTestResults@2
-      #   displayName: Consume SCA Results
-      #   condition: always()
-      #   inputs:
-      #     testResultsFormat: JUnit
-      #     testResultsFiles: "**/*.xml"
-      #     searchFolder: $(Build.ArtifactStagingDirectory)/sca
-      #     failTaskOnFailedTests: true
+      - task: PublishTestResults@2
+        displayName: Consume SCA Results
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: "**/*.xml"
+          searchFolder: $(Build.ArtifactStagingDirectory)/sca
+          failTaskOnFailedTests: true
 
-      # - task: Bash@3
-      #   displayName: Artifacts Cleaning
-      #   condition: always()
-      #   inputs:
-      #     filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
-      #     arguments: -a sca
+      - task: Bash@3
+        displayName: Artifacts Cleaning
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+          arguments: -a sca
