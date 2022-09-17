@@ -29,14 +29,14 @@ stages:
     jobs:
       - template: job-groups/systems-checks.yaml
 
-  - stage: ${{ parameters.buildStageName }}
-    displayName: ${{ parameters.buildStageDisplayName }}
-    condition: |
-      succeeded('${{ parameters.preBuildStageName }}')
-    dependsOn:
-      - ${{ parameters.preBuildStageName }}
-    variables:
-      - ${{ each variableGroup in parameters.variableGroups }}:
-          - group: ${{ variableGroup }}
-    jobs:
-      - template: job-groups/custom-build.yaml
+  # - stage: ${{ parameters.buildStageName }}
+  #   displayName: ${{ parameters.buildStageDisplayName }}
+  #   condition: |
+  #     succeeded('${{ parameters.preBuildStageName }}')
+  #   dependsOn:
+  #     - ${{ parameters.preBuildStageName }}
+  #   variables:
+  #     - ${{ each variableGroup in parameters.variableGroups }}:
+  #         - group: ${{ variableGroup }}
+  #   jobs:
+  #     - template: job-groups/custom-build.yaml
