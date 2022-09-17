@@ -1,0 +1,44 @@
+parameters:
+  - name: releaseProfile
+    type: string
+  - name: deploymentProfile
+    type: string
+  - name: artifactAlias
+    type: string
+  - name: artifactName
+    type: string
+  - name: releaseList
+    type: object
+    default: []
+  - name: commonVariableGroups
+    type: object
+    default: []
+  - name: deploymentConfig
+    type: object
+    default: []
+  - name: apigeeConfigList
+    type: object
+    default: []
+
+resources:
+  repositories:
+    - repository: scripts
+      type: github
+      name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
+      ref: feat/api-proxy-framework
+      endpoint: GitHubSvcConn
+
+variables:
+  - ${{ each variableGroup in parameters.commonVariableGroups }}:
+      - group: ${{ variableGroup }}
+
+stages:
+  - template: release-profiles/${{ parameters.releaseProfile }}.yaml
+    parameters:
+      deploymentProfile: ${{ parameters.deploymentProfile }}
+      artifactAlias: ${{ parameters.artifactAlias }}
+      artifactName: ${{ parameters.artifactName }}
+      deploymentConfig: ${{ parameters.deploymentConfig }}
+      apigeeConfigList: ${{ parameters.apigeeConfigList }}
+      ${{ if eq(parameters.releaseProfile, 'custom-release') }}:
+        releaseList: ${{ parameters.releaseList }}
