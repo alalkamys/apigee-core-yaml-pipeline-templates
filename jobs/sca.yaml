@@ -22,6 +22,7 @@ jobs:
       - ${{ parameters.mandatoryTasks }}
       
       - checkout: self
+        path: s
         persistCredentials: true
 
       - template: ../steps/export-scripts-path.yaml
