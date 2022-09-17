@@ -1,0 +1,61 @@
+parameters:
+  - name: jobName
+    type: string
+    default: UnitTesting
+  - name: displayName
+    type: string
+    default: Unit Testing
+  - name: dependsOn
+    type: object
+    default: []
+  - name: mandatoryTasks
+    type: stepList
+    default: []
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn:
+      - ${{ each dependency in parameters.dependsOn }}:
+          - ${{ dependency }}
+    steps:
+      - ${{ parameters.mandatoryTasks }}
+
+      - checkout: self
+        path: s/$(Build.Repository.Name)
+        persistCredentials: true
+
+      - template: ../steps/export-scripts-path.yaml
+
+      - task: Npm@1
+        displayName: npm install
+        inputs:
+          command: install
+
+      - task: Bash@3
+        displayName: "UT: JavaScript Resources"
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/mocha-utest.sh
+
+      - task: PublishTestResults@2
+        displayName: Consume UTests Results
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: "**/*.xml"
+          searchFolder: $(Build.ArtifactStagingDirectory)/utests
+          failTaskOnFailedTests: true
+
+      - task: PublishCodeCoverageResults@1
+        displayName: "Publish: Coverage Report"
+        condition: always()
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: "$(Build.SourcesDirectory)/**/*coverage.xml"
+
+      - task: Bash@3
+        displayName: Artifacts Cleaning
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+          arguments: -a utests
