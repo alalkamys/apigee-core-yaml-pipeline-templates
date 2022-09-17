@@ -38,6 +38,8 @@ jobs:
           ls scripts
           echo "-> ls ${PIPELINE_WORKSPACE}"
           ls "${PIPELINE_WORKSPACE}"
+          echo "-> ls /home/vsts/work/1/s/scripts"
+          ls /home/vsts/work/1/s/scripts
         displayName: Scout Agent Vision
 
       # - task: NodeTool@0
