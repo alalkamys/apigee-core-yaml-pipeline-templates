@@ -1,6 +1,6 @@
 steps:
-  - checkout: self
-    path: scripts
+  - checkout: scripts
+    displayName: Checkout scripts
     fetchDepth: 1
     clean: true
 
