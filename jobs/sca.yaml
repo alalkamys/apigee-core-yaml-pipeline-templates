@@ -29,10 +29,15 @@ jobs:
 
       - script: |
           echo working dir: $(pwd)
-          echo ls
-          ls
           echo BUILD_SOURCESDIRECTORY: "${BUILD_SOURCESDIRECTORY}"
           echo BUILD_REPOSITORY_LOCALPATH: "${BUILD_REPOSITORY_LOCALPATH}"
+          echo PIPELINE_WORKSPACE: "${PIPELINE_WORKSPACE}"
+          echo "-> ls"
+          ls
+          echo "-> ls scripts"
+          ls scripts
+          echo "-> ls ${PIPELINE_WORKSPACE}"
+          ls "${PIPELINE_WORKSPACE}"
         displayName: Scout Agent Vision
 
       # - task: NodeTool@0
