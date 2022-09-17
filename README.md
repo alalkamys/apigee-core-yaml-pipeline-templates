@@ -9,7 +9,7 @@
 
 [Key Features](#key-features) •
 [The Why?](#the-why) •
-[Developed By](#⚔️-developed-by) •
+[Developed By](#%EF%B8%8F-developed-by) •
 [Getting Started](#getting-started) •
 [Author](#book-author)
 
