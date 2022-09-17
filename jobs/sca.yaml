@@ -32,6 +32,7 @@ jobs:
           echo ls
           ls
           echo BUILD_SOURCESDIRECTORY: "${BUILD_SOURCESDIRECTORY}"
+          echo BUILD_REPOSITORY_LOCALPATH: "${BUILD_REPOSITORY_LOCALPATH}"
         displayName: Scout Agent Vision
 
       # - task: NodeTool@0
