@@ -16,6 +16,7 @@ parameters:
     default: []
   - name: buildProfile
     type: string
+    default: mvn-plugins
 
 resources:
   repositories:
