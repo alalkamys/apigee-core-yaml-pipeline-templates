@@ -27,7 +27,6 @@ jobs:
 
       - template: ../steps/export-scripts-path.yaml
       
-
       - script: |
           echo working dir: $(pwd)
           echo BUILD_SOURCESDIRECTORY: "${BUILD_SOURCESDIRECTORY}"
