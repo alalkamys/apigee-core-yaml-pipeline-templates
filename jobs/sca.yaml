@@ -21,11 +21,11 @@ jobs:
     steps:
       - ${{ parameters.mandatoryTasks }}
       
+      - template: ../steps/export-scripts-path.yaml
+      
       - checkout: self
         path: s
         persistCredentials: true
-
-      - template: ../steps/export-scripts-path.yaml
       
       - script: |
           echo working dir: $(pwd)
