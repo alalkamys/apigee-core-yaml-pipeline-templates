@@ -1,12 +1,12 @@
 steps:
   - checkout: scripts
     displayName: Checkout scripts
-    path: scripts
+    path: s/scripts
     fetchDepth: 1
     clean: true
 
   - bash: |
-      path_to_scripts="${BUILD_SOURCESDIRECTORY}"/cicd/templates/scripts
+      path_to_scripts="${BUILD_SOURCESDIRECTORY}"/scripts/scripts
       echo "##[debug]path to scripts: ${path_to_scripts}"
       echo "##vso[task.setvariable variable=Framework.Config.PathToScripts]${path_to_scripts}"
     displayName: Export Scripts Path
