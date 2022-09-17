@@ -14,6 +14,8 @@ parameters:
   - name: variableGroups
     type: object
     default: []
+  - name: buildProfile
+    type: string
 
 resources:
   repositories:
@@ -39,4 +41,4 @@ stages:
       - ${{ each variableGroup in parameters.variableGroups }}:
           - group: ${{ variableGroup }}
     jobs:
-      - template: job-groups/custom-build.yaml
+      - template: build-profiles/${{ parameters.buildProfile }}.yaml
