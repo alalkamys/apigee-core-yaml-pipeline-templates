@@ -1,6 +1,7 @@
 steps:
   - checkout: scripts
     displayName: Checkout scripts
+    path: scripts
     fetchDepth: 1
     clean: true
 
