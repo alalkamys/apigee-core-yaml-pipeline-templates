@@ -19,11 +19,8 @@ parameters:
 
 resources:
   repositories:
-    - repository: scripts
-      type: github
-      name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
+    - repository: self
       ref: feat/api-proxy-framework
-      endpoint: ShehabEl-DeenAlalkamy
 
 stages:
   - stage: ${{ parameters.preBuildStageName }}
