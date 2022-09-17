@@ -1,0 +1,5 @@
+# ignore .DS_Store
+.DS_Store
+
+# ignore vscode temp generated files
+.vscode/*
