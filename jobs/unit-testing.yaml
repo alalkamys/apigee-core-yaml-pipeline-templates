@@ -21,11 +21,11 @@ jobs:
     steps:
       - ${{ parameters.mandatoryTasks }}
 
-      - checkout: self
-        path: s/$(Build.Repository.Name)
-        persistCredentials: true
-
       - template: ../steps/export-scripts-path.yaml
+
+      - checkout: self
+        path: s
+        persistCredentials: true
 
       - task: Npm@1
         displayName: npm install

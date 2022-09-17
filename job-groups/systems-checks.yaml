@@ -1,4 +1,4 @@
 jobs:
   - template: ../jobs/sca.yaml
 
-  # - template: ../jobs/unit-testing.yaml
+  - template: ../jobs/unit-testing.yaml
