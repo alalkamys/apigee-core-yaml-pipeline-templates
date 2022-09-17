@@ -24,7 +24,7 @@ jobs:
       - template: ../steps/export-scripts-path.yaml
       
       - checkout: self
-        path: $(Build.SourcesDirectory)
+        path: s
         persistCredentials: true
 
       - script: |
