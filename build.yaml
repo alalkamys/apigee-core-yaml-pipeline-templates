@@ -22,7 +22,7 @@ resources:
     - repository: scripts
       type: github
       name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
-      ref: feat/api-proxy-framework
+      ref: main
       endpoint: ShehabEl-DeenAlalkamy
 
 stages:
