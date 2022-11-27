@@ -58,6 +58,8 @@ jobs:
         env:
           ${{ if eq(parameters.deploymentProfile.name, 'mvn-plugins') }}:
             SOURCE_PATH: $(Build.SourcesDirectory)/target/test/integration
+          ${{ if eq(parameters.deploymentProfile.name, 'oas2apigee') }}:
+            SOURCE_PATH: $(Build.SourcesDirectory)/test/integration
 
       - task: PublishTestResults@2
         displayName: Consume FT Results
