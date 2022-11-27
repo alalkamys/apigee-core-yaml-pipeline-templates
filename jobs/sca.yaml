@@ -1,4 +1,6 @@
 parameters:
+  - name: buildProfile
+    type: object
   - name: jobName
     type: string
     default: StaticCodeAnalysis
@@ -37,15 +39,17 @@ jobs:
         inputs:
           command: install
 
-      - task: Bash@3
-        displayName: "SCA: Proxy Bundle"
-        inputs:
-          filePath: $(Framework.Config.PathToScripts)/apigeelint-scan.sh
+      - ${{ if eq(parameters.buildProfile.name, 'mvn-plugins') }}:
+          - task: Bash@3
+            displayName: "SCA: Proxy Bundle"
+            inputs:
+              filePath: $(Framework.Config.PathToScripts)/apigeelint-scan.sh
 
-      - task: Bash@3
-        displayName: "SCA: JavaScript Resources"
-        inputs:
-          filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
+          - ${{ if eq(parameters.buildProfile.type, 'api-proxies') }}:
+              - task: Bash@3
+                displayName: "SCA: JavaScript Resources"
+                inputs:
+                  filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
 
       - task: PublishTestResults@2
         displayName: Consume SCA Results

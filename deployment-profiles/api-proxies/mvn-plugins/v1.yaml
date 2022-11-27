@@ -1,4 +1,6 @@
 parameters:
+  - name: deploymentProfile
+    type: object
   - name: jobName
     type: string
     default: Deploy
@@ -44,11 +46,11 @@ jobs:
           steps:
             - ${{ parameters.mandatoryTasks }}
 
-            - template: ../steps/export-scripts-path.yaml
-
             - download: ${{ parameters.artifactAlias }}
               artifact: ${{ parameters.artifactName }}
               displayName: Download ${{ parameters.artifactName }}
+
+            - template: ../../../steps/export-scripts-path.yaml
 
             - task: CopyFiles@2
               displayName: Copy Artifacts to Build Sources Directory
@@ -103,8 +105,9 @@ jobs:
                 filePath: $(Framework.Config.PathToScripts)/sa-key-manager.sh
                 arguments: delete
 
-  - template: ../jobs/functional-testing.yaml
+  - template: ../../../jobs/functional-testing.yaml
     parameters:
+      deploymentProfile: ${{ parameters.deploymentProfile }}
       artifactAlias: ${{ parameters.artifactAlias }}
       artifactName: ${{ parameters.artifactName }}
       dependsOn:

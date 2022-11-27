@@ -1,0 +1,7 @@
+parameters:
+  - name: buildProfile
+    type: object
+
+jobs:
+  - ${{ if eq(parameters.buildProfile.name, 'mvn-plugins') }}:
+      - template: ../jobs/apigee-mvn-plugin.yaml

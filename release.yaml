@@ -1,7 +1,11 @@
 parameters:
-  - name: releaseProfile
-    type: string
   - name: deploymentProfile
+    type: object
+    default:
+      name:
+      type:
+      version:
+  - name: releaseProfile
     type: string
   - name: artifactAlias
     type: string
@@ -25,7 +29,10 @@ resources:
     - repository: scripts
       type: github
       name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
-      ref: main
+      # TODO uncomment when work is done
+      # ref: main
+      # TODO remove when development is done
+      ref: rel/framework-v2.0.0
       endpoint: ShehabEl-DeenAlalkamy
 
 variables:
