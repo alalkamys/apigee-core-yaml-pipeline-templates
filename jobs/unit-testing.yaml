@@ -19,47 +19,43 @@ jobs:
       - ${{ each dependency in parameters.dependsOn }}:
           - ${{ dependency }}
     steps:
-      - script: |
-          echo unit testing..
-        displayName: Unit Testing
+      - ${{ parameters.mandatoryTasks }}
 
-      # - ${{ parameters.mandatoryTasks }}
+      - template: ../steps/export-scripts-path.yaml
 
-      # - template: ../steps/export-scripts-path.yaml
+      - checkout: self
+        path: s
+        persistCredentials: true
 
-      # - checkout: self
-      #   path: s
-      #   persistCredentials: true
+      - task: Npm@1
+        displayName: npm install
+        inputs:
+          command: install
 
-      # - task: Npm@1
-      #   displayName: npm install
-      #   inputs:
-      #     command: install
+      - task: Bash@3
+        displayName: "UT: JavaScript Resources"
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/mocha-utest.sh
 
-      # - task: Bash@3
-      #   displayName: "UT: JavaScript Resources"
-      #   inputs:
-      #     filePath: $(Framework.Config.PathToScripts)/mocha-utest.sh
+      - task: PublishTestResults@2
+        displayName: Consume UTests Results
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: "**/*.xml"
+          searchFolder: $(Build.ArtifactStagingDirectory)/utests
+          failTaskOnFailedTests: true
 
-      # - task: PublishTestResults@2
-      #   displayName: Consume UTests Results
-      #   condition: always()
-      #   inputs:
-      #     testResultsFormat: JUnit
-      #     testResultsFiles: "**/*.xml"
-      #     searchFolder: $(Build.ArtifactStagingDirectory)/utests
-      #     failTaskOnFailedTests: true
+      - task: PublishCodeCoverageResults@1
+        displayName: "Publish: Coverage Report"
+        condition: always()
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: "$(Build.SourcesDirectory)/**/*coverage.xml"
 
-      # - task: PublishCodeCoverageResults@1
-      #   displayName: "Publish: Coverage Report"
-      #   condition: always()
-      #   inputs:
-      #     codeCoverageTool: Cobertura
-      #     summaryFileLocation: "$(Build.SourcesDirectory)/**/*coverage.xml"
-
-      # - task: Bash@3
-      #   displayName: Artifacts Cleaning
-      #   condition: always()
-      #   inputs:
-      #     filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
-      #     arguments: -a utests
+      - task: Bash@3
+        displayName: Artifacts Cleaning
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+          arguments: -a utests
