@@ -1,0 +1,35 @@
+parameters:
+  - name: buildProfile
+    type: object
+  - name: preBuildStageName
+    type: string
+  - name: preBuildStageDisplayName
+    type: string
+  - name: buildStageName
+    type: string
+  - name: buildStageDisplayName
+    type: string
+  - name: variableGroups
+    type: object
+
+stages:
+  - stage: ${{ parameters.preBuildStageName }}
+    displayName: ${{ parameters.preBuildStageDisplayName }}
+    jobs:
+      - template: ../../../job-groups/systems-checks.yaml
+        parameters:
+          buildProfile: ${{ parameters.buildProfile }}
+
+  - stage: ${{ parameters.buildStageName }}
+    displayName: ${{ parameters.buildStageDisplayName }}
+    condition: |
+      succeeded('${{ parameters.preBuildStageName }}')
+    dependsOn:
+      - ${{ parameters.preBuildStageName }}
+    variables:
+      - ${{ each variableGroup in parameters.variableGroups }}:
+          - group: ${{ variableGroup }}
+    jobs:
+      - template: ../../../job-groups/custom-build.yaml
+        parameters:
+          buildProfile: ${{ parameters.buildProfile }}      

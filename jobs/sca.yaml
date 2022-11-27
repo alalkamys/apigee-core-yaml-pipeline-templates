@@ -51,6 +51,12 @@ jobs:
                 inputs:
                   filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
 
+      - ${{ if eq(parameters.buildProfile.name, 'oas2apigee') }}:
+          - task: Bash@3
+            displayName: "SCA: OpenAPI Specs"
+            inputs:
+              filePath: $(Framework.Config.PathToScripts)/spectral-lint-scan.sh
+
       - task: PublishTestResults@2
         displayName: Consume SCA Results
         condition: always()
