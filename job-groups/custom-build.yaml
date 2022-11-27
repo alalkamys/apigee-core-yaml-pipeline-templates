@@ -5,3 +5,6 @@ parameters:
 jobs:
   - ${{ if eq(parameters.buildProfile.name, 'mvn-plugins') }}:
       - template: ../jobs/apigee-mvn-plugin.yaml
+
+  - ${{ if eq(parameters.buildProfile.name, 'oas2apigee') }}:
+      - template: ../jobs/oas2apigee.yaml
