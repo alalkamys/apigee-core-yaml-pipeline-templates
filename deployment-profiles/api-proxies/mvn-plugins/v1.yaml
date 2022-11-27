@@ -74,29 +74,37 @@ jobs:
               env:
                 CONFIG_LIST: ${{ convertToJson(parameters.apigeeConfigList) }}
 
-            - task: Maven@3
+            - bash: |
+                echo creating configs..
               displayName: Create Configs
-              inputs:
-                mavenPomFile: "./pom.xml"
-                mavenOptions: "-Xmx3072m"
-                javaHomeOption: "JDKVersion"
-                jdkVersionOption: "1.8"
-                jdkArchitectureOption: "x64"
-                publishJUnitResults: false
-                options: -P googleapi -D org=$(org) -D env=$(env) -D sa=sa.json
-                goals: $(Framework.Config.Mvn.ApigeeConfigGoals)
 
-            - task: Maven@3
+            - bash: |
+                echo deploy proxy bundle..
               displayName: Deploy Proxy Bundle
-              inputs:
-                mavenPomFile: "./pom.xml"
-                mavenOptions: "-Xmx3072m"
-                javaHomeOption: "JDKVersion"
-                jdkVersionOption: "1.8"
-                jdkArchitectureOption: "x64"
-                publishJUnitResults: false
-                options: -P googleapi -D org=$(org) -D env=$(env) -D sa=sa.json
-                goals: apigee-enterprise:deploy
+
+            # - task: Maven@3
+            #   displayName: Create Configs
+            #   inputs:
+            #     mavenPomFile: "./pom.xml"
+            #     mavenOptions: "-Xmx3072m"
+            #     javaHomeOption: "JDKVersion"
+            #     jdkVersionOption: "1.8"
+            #     jdkArchitectureOption: "x64"
+            #     publishJUnitResults: false
+            #     options: -P googleapi -D org=$(org) -D env=$(env) -D sa=sa.json
+            #     goals: $(Framework.Config.Mvn.ApigeeConfigGoals)
+
+            # - task: Maven@3
+            #   displayName: Deploy Proxy Bundle
+            #   inputs:
+            #     mavenPomFile: "./pom.xml"
+            #     mavenOptions: "-Xmx3072m"
+            #     javaHomeOption: "JDKVersion"
+            #     jdkVersionOption: "1.8"
+            #     jdkArchitectureOption: "x64"
+            #     publishJUnitResults: false
+            #     options: -P googleapi -D org=$(org) -D env=$(env) -D sa=sa.json
+            #     goals: apigee-enterprise:deploy
 
             - task: Bash@3
               displayName: Delete SA Key File
