@@ -19,43 +19,47 @@ jobs:
       - ${{ each dependency in parameters.dependsOn }}:
           - ${{ dependency }}
     steps:
-      - ${{ parameters.mandatoryTasks }}
+      - script: |
+          echo unit testing..
+        displayName: Unit Testing
 
-      - template: ../steps/export-scripts-path.yaml
+      # - ${{ parameters.mandatoryTasks }}
 
-      - checkout: self
-        path: s
-        persistCredentials: true
+      # - template: ../steps/export-scripts-path.yaml
 
-      - task: Npm@1
-        displayName: npm install
-        inputs:
-          command: install
+      # - checkout: self
+      #   path: s
+      #   persistCredentials: true
 
-      - task: Bash@3
-        displayName: "UT: JavaScript Resources"
-        inputs:
-          filePath: $(Framework.Config.PathToScripts)/mocha-utest.sh
+      # - task: Npm@1
+      #   displayName: npm install
+      #   inputs:
+      #     command: install
 
-      - task: PublishTestResults@2
-        displayName: Consume UTests Results
-        condition: always()
-        inputs:
-          testResultsFormat: JUnit
-          testResultsFiles: "**/*.xml"
-          searchFolder: $(Build.ArtifactStagingDirectory)/utests
-          failTaskOnFailedTests: true
+      # - task: Bash@3
+      #   displayName: "UT: JavaScript Resources"
+      #   inputs:
+      #     filePath: $(Framework.Config.PathToScripts)/mocha-utest.sh
 
-      - task: PublishCodeCoverageResults@1
-        displayName: "Publish: Coverage Report"
-        condition: always()
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: "$(Build.SourcesDirectory)/**/*coverage.xml"
+      # - task: PublishTestResults@2
+      #   displayName: Consume UTests Results
+      #   condition: always()
+      #   inputs:
+      #     testResultsFormat: JUnit
+      #     testResultsFiles: "**/*.xml"
+      #     searchFolder: $(Build.ArtifactStagingDirectory)/utests
+      #     failTaskOnFailedTests: true
 
-      - task: Bash@3
-        displayName: Artifacts Cleaning
-        condition: always()
-        inputs:
-          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
-          arguments: -a utests
+      # - task: PublishCodeCoverageResults@1
+      #   displayName: "Publish: Coverage Report"
+      #   condition: always()
+      #   inputs:
+      #     codeCoverageTool: Cobertura
+      #     summaryFileLocation: "$(Build.SourcesDirectory)/**/*coverage.xml"
+
+      # - task: Bash@3
+      #   displayName: Artifacts Cleaning
+      #   condition: always()
+      #   inputs:
+      #     filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+      #     arguments: -a utests

@@ -1,4 +1,6 @@
 parameters:
+  - name: buildProfile
+    type: object
   - name: jobName
     type: string
     default: StaticCodeAnalysis
@@ -21,44 +23,80 @@ jobs:
     steps:
       - ${{ parameters.mandatoryTasks }}
 
-      - template: ../steps/export-scripts-path.yaml
-
       - checkout: self
         path: s
         persistCredentials: true
 
-      - task: NodeTool@0
+      - script: |
+          echo export scripts path..
+        displayName: Export Scripts Path
+
+      - script: |
+          echo installing node 18.0.0..
         displayName: Install Node 18.0.0
-        inputs:
-          versionSpec: 18.0.0
 
-      - task: Npm@1
+      - script: |
+          echo npm install..
         displayName: npm install
-        inputs:
-          command: install
 
-      - task: Bash@3
-        displayName: "SCA: Proxy Bundle"
-        inputs:
-          filePath: $(Framework.Config.PathToScripts)/apigeelint-scan.sh
+      - ${{ if eq(parameters.buildProfile.name, 'mvn-plugins') }}:
+          - script: |
+              echo linting proxy bundle..
+            displayName: "SCA: Proxy Bundle"
 
-      - task: Bash@3
-        displayName: "SCA: JavaScript Resources"
-        inputs:
-          filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
+          - ${{ if eq(parameters.buildProfile.type, 'api-proxies') }}:
+              - script: |
+                  echo linting js resources..
+                displayName: "SCA: JavScript Resources"
 
-      - task: PublishTestResults@2
+      - script: |
+          echo consuming sca results..
         displayName: Consume SCA Results
-        condition: always()
-        inputs:
-          testResultsFormat: JUnit
-          testResultsFiles: "**/*.xml"
-          searchFolder: $(Build.ArtifactStagingDirectory)/sca
-          failTaskOnFailedTests: true
 
-      - task: Bash@3
+      - script: |
+          echo cleaning artifacts..
         displayName: Artifacts Cleaning
-        condition: always()
-        inputs:
-          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
-          arguments: -a sca
+
+      # - ${{ parameters.mandatoryTasks }}
+
+      # - template: ../steps/export-scripts-path.yaml
+
+      # - checkout: self
+      #   path: s
+      #   persistCredentials: true
+
+      # - task: NodeTool@0
+      #   displayName: Install Node 18.0.0
+      #   inputs:
+      #     versionSpec: 18.0.0
+
+      # - task: Npm@1
+      #   displayName: npm install
+      #   inputs:
+      #     command: install
+
+      # - task: Bash@3
+      #   displayName: "SCA: Proxy Bundle"
+      #   inputs:
+      #     filePath: $(Framework.Config.PathToScripts)/apigeelint-scan.sh
+
+      # - task: Bash@3
+      #   displayName: "SCA: JavaScript Resources"
+      #   inputs:
+      #     filePath: $(Framework.Config.PathToScripts)/eslint-scan.sh
+
+      # - task: PublishTestResults@2
+      #   displayName: Consume SCA Results
+      #   condition: always()
+      #   inputs:
+      #     testResultsFormat: JUnit
+      #     testResultsFiles: "**/*.xml"
+      #     searchFolder: $(Build.ArtifactStagingDirectory)/sca
+      #     failTaskOnFailedTests: true
+
+      # - task: Bash@3
+      #   displayName: Artifacts Cleaning
+      #   condition: always()
+      #   inputs:
+      #     filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+      #     arguments: -a sca
