@@ -32,7 +32,7 @@ resources:
       # TODO uncomment when work is done
       # ref: main
       # TODO remove when development is done
-      ref: rel/framework-v2.0.0
+      ref: feat/oas2apigee-deployment-profile
       endpoint: ShehabEl-DeenAlalkamy
 
 variables:
