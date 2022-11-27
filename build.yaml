@@ -26,7 +26,10 @@ resources:
     - repository: scripts
       type: github
       name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
-      ref: main
+      # TODO uncomment when work is done
+      # ref: main
+      # TODO remove when development is done
+      ref: feat/templates-design-enhancement
       endpoint: ShehabEl-DeenAlalkamy
 
 extends:
