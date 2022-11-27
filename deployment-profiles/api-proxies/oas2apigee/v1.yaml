@@ -38,8 +38,6 @@ jobs:
               displayName: Download ${{ parameters.artifactName }}
 
             - template: ../../../steps/export-scripts-path.yaml
-              parameters:
-                isReleaseFlow: true
 
             - task: CopyFiles@2
               displayName: Copy Artifacts to Build Sources Directory
