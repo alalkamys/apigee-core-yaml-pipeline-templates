@@ -1,0 +1,74 @@
+parameters:
+  - name: jobName
+    type: string
+    default: OAS2Apigee
+  - name: displayName
+    type: string
+    default: OAS2Apigee
+  - name: dependsOn
+    type: object
+    default: []
+  - name: mandatoryTasks
+    type: stepList
+    default: []
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn:
+      - ${{ each dependency in parameters.dependsOn }}:
+          - ${{ dependency }}
+    steps:
+      - ${{ parameters.mandatoryTasks }}
+
+      - template: ../steps/export-scripts-path.yaml
+
+      - checkout: self
+        path: s
+        persistCredentials: true
+
+      - task: Bash@3
+        displayName: Install Software
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/oas2apigee/install-software.sh
+
+      - task: Bash@3
+        displayName: Generate SA Key File
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/sa-key-manager.sh
+          arguments: generate
+        env:
+          GCP_SA: $(gcpServiceAccount)
+
+      - task: Bash@3
+        displayName: Create API Proxy
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/oas2apigee/create-proxy.sh
+        env:
+          SA_PATH: ./sa.json
+
+      - task: Bash@3
+        name: ArtifactsStagingStep
+        displayName: Artifacts Staging
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/oas2apigee/artifacts-staging.sh
+
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish: OAS2Apigee Artifacts"
+        inputs:
+          pathToPublish: $(Build.ArtifactStagingDirectory)/oas2apigee-artifacts
+          artifactName: oas2apigee-artifacts
+
+      - task: Bash@3
+        displayName: Delete SA Key File
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/sa-key-manager.sh
+          arguments: delete
+
+      - task: Bash@3
+        displayName: Artifacts Cleaning
+        condition: always()
+        inputs:
+          filePath: $(Framework.Config.PathToScripts)/clean-artifact.sh
+          arguments: -a oas2apigee-artifacts

@@ -1,7 +1,11 @@
 parameters:
-  - name: releaseProfile
-    type: string
   - name: deploymentProfile
+    type: object
+    default:
+      name:
+      type:
+      version:
+  - name: releaseProfile
     type: string
   - name: artifactAlias
     type: string

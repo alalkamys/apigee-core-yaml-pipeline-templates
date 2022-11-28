@@ -1,6 +1,6 @@
 parameters:
   - name: deploymentProfile
-    type: string
+    type: object
   - name: artifactAlias
     type: string
   - name: artifactName
@@ -10,19 +10,21 @@ parameters:
   - name: deploymentConfig
     type: object
   - name: apigeeConfigList
-    type: object    
+    type: object
 
 stages:
   - ${{ each release in parameters.releaseList }}:
       - stage: ${{ release.stageName }}
         displayName: ${{ release.displayName }}
         variables:
-          - group: ${{ release.variableGroup }}
+          - ${{ each variableGroup in release.variableGroups }}:
+              - group: ${{ variableGroup }}
         jobs:
-          - template: ../deployment-profiles/${{ parameters.deploymentProfile }}.yaml
+          - template: ../deployment-profiles/${{ parameters.deploymentProfile.type }}/${{ parameters.deploymentProfile.name }}/v${{ parameters.deploymentProfile.version }}.yaml
             parameters:
+              deploymentProfile: ${{ parameters.deploymentProfile }}
               artifactAlias: ${{ parameters.artifactAlias }}
               artifactName: ${{ parameters.artifactName }}
               environment: ${{ release.environment }}
-              ${{ if eq(parameters.deploymentConfig.customApigeeConfig, 'true') }}:
+              ${{ if and(eq(parameters.deploymentProfile.name, 'mvn-plugins'), eq(parameters.deploymentConfig.customApigeeConfig, 'true')) }}:
                 apigeeConfigList: ${{ parameters.apigeeConfigList }}

@@ -27,7 +27,9 @@
 ## Key Features
 
 - Supports Apigee X / Hybrid.
-- Supports API proxies deployment using [Apigee Deploy Maven Plugin][apigee-deploy-mvn] & [Apigee Config Maven Plugin][apigee-config-mvn].
+- Supports API proxies deployment using:
+  - [Apigee Deploy Maven Plugin][apigee-deploy-mvn] & [Apigee Config Maven Plugin][apigee-config-mvn].
+  - [OpenAPI Specifications 3.x][oas].
 - Follows best practices.
 - Fully decoupled CI/CD.
 - Easy to use.
@@ -78,7 +80,12 @@
     extends:
       template: build.yaml@{{ repository_identifier }} # for example: build.yaml@apigee-core
       parameters:
-        buildProfile: {{ build_profile }} # profile for building your API proxies, currently 'mvn-plugins' is the only supported value to build using Apigee Deploy & Apigee Config Maven Plugins
+        buildProfile: # determines how the pipeline will behave
+          type: {{ build_profile_type }} # type of the build profile e.g. 'api-proxies', 'sharedflows', ..etc. 'api-proxies' value is the only supported value
+          name: {{ build_profile_name }} # can be 'mvn-plugins' or 'oas2apigee'
+                                         # 'mvn-plugins': build api proxies using Apigee Deploy & Apigee Config Maven Plugins
+                                         # 'oas2apigee': build api proxies using apigeecli to deploy API proxies using OAS3.x files
+          version: {{ build_profile_version }} # '1' is the only supported version currently      
         variableGroups:
           - {{ common_variable_group }} # variable group for common variables across all environments, e.g gcpServiceAccount, org & proxyDesc
     ```
@@ -100,7 +107,10 @@
         template: release.yaml@{{ repository_identifier }} # for example: release.yaml@apigee-core
         parameters:
           releaseProfile: {{ release_profile }} # which Azure DevOps environments to deploy to, currently 'custom-release' is the only supported value
-          deploymentProfile: {{ deployment_profile }} # how to deploy your API proxy, currently 'mvn-plugins' is the only supported value
+          deploymentProfile: # how to deploy your API proxy
+            type: {{ deployment_profile_type }} # 'api-proxies' value is the only supported value
+            name: {{ deployment_profile_name }} # 'mvn-plugins' or 'oas2apigee' are supported
+            version: {{ deployment_profile_version }} # '1' is the only supported value
           artifactAlias: {{ build_pipeline_resource_identifier }} # can be specified in resources.pipelines[0].pipeline
           artifactName: {{ proxy_bundle_artifact_name }} # by default it is named 'proxy-bundle-artifacts' in your build pipeline
           commonVariableGroups:
@@ -108,7 +118,9 @@
           releaseList: # required for 'custom-release' release profile, specify list of your deployment environments
             - stageName: {{ stage_name }} # identifier for you stage, for example 'Dev'
               displayName: {{ display_name }} # display name shown in your release pipeline run, for example 'Dev'
-              variableGroup: {{ env_variable_group }} # your environment specific variables
+              variableGroups: # your environment specific variables
+                - {{ env_variable_group }} 
+                ...
               environment: {{ azure_devops_environment }} # your deployment environment
             ...
           apigeeConfigList: # required if deploymentConfig.customApigeeConfig is true, contains all the list of configurations you wish to create only regardless of source code
@@ -142,5 +154,6 @@ Shehab El-Deen Alalkamy
 [apigee-kvm]: https://cloud.google.com/apigee/docs/api-platform/cache/key-value-maps#:~:text=maps%20(KVMs).-,Overview,encrypted%20key%2Fvalue%20String%20pairs.
 [apigee-deploy-mvn]: https://github.com/apigee/apigee-deploy-maven-plugin
 [apigee-config-mvn]: https://github.com/apigee/apigee-config-maven-plugin
+[oas]: https://github.com/OAI/OpenAPI-Specification#the-openapi-specification
 [azure-pipelines]: https://azure.microsoft.com/en-us/services/devops/pipelines/
 [abomis-airports]: https://github.com/ShehabEl-DeenAlalkamy/abomis-airports

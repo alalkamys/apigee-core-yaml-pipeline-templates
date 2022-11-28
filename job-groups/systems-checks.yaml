@@ -1,4 +1,11 @@
+parameters:
+  - name: buildProfile
+    type: object
+
 jobs:
   - template: ../jobs/sca.yaml
+    parameters:
+      buildProfile: ${{ parameters.buildProfile }}
 
-  - template: ../jobs/unit-testing.yaml
+  - ${{ if and(eq(parameters.buildProfile.name, 'mvn-plugins'), eq(parameters.buildProfile.type, 'api-proxies')) }}:
+      - template: ../jobs/unit-testing.yaml
