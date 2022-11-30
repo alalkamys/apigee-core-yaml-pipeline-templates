@@ -29,10 +29,7 @@ resources:
     - repository: scripts
       type: github
       name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
-      # TODO uncomment when work is done
-      # ref: refs/tags/v2.1.0-beta
-      # TODO remove when development is done
-      ref: rel/framework-v2.1.0-beta
+      ref: refs/tags/v2.1.0-beta
       endpoint: ShehabEl-DeenAlalkamy
 
 variables:
