@@ -12,7 +12,6 @@ main() {
     [[ "${?}" -eq 1 ]] && echo "${ADO_DEBUG_CMD}exiting.." && exit 1 || echo "${ADO_DEBUG_CMD}[${CHECK_MARK}] property set validation checks"
     replace "@TARGET_ENDPOINT" "${TARGETENDPOINT}"
     manage_ps
-    replace "${TARGETENDPOINT}" "@TARGET_ENDPOINT"
 }
 
 validate_ps() {
@@ -72,7 +71,7 @@ replace() {
         PLACEHOLDER=$(sed -e 's/[()&/]/\\&/g' <<<"${1}")
         VALUE=$(sed -e 's/[()&/]/\\&/g' <<<"${2}")
         echo "${ADO_DEBUG_CMD}replacing ${1} with ${2} in ${PROPERTY_SET_FILE_PATH}"
-        sed -i '' 's/'"${PLACEHOLDER}"'/'"${VALUE}"'/g' "${PROPERTY_SET_FILE_PATH}"
+        sed -i 's/'"${PLACEHOLDER}"'/'"${VALUE}"'/g' "${PROPERTY_SET_FILE_PATH}"
     fi
 }
 
