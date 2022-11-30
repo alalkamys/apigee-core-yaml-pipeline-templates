@@ -29,7 +29,7 @@ resources:
     - repository: scripts
       type: github
       name: ShehabEl-DeenAlalkamy/apigee-core-yaml-pipeline-templates
-      ref: main
+      ref: refs/tags/v2.0.0-beta
       endpoint: ShehabEl-DeenAlalkamy
 
 variables:
