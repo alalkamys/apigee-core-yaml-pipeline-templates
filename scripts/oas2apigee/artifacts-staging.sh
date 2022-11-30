@@ -16,6 +16,13 @@ main() {
         cp -r test*/integration/* "${BUILD_ARTIFACTSTAGINGDIRECTORY}"/oas2apigee-artifacts/test/integration
         [[ -f package.json ]] && echo "${ADO_DEBUG_CMD}"copying package*.json to "${BUILD_ARTIFACTSTAGINGDIRECTORY}"/oas2apigee-artifacts/ && cp package*.json "${BUILD_ARTIFACTSTAGINGDIRECTORY}"/oas2apigee-artifacts/
     fi
+    if [[ -d resources ]]; then
+        echo "${ADO_DEBUG_CMD}"resources/ found
+        echo "${ADO_DEBUG_CMD}"creating "${BUILD_ARTIFACTSTAGINGDIRECTORY}"/oas2apigee-artifacts/resources
+        mkdir -p "${BUILD_ARTIFACTSTAGINGDIRECTORY}"/oas2apigee-artifacts/resources
+        echo "${ADO_DEBUG_CMD}"copying resources to "${BUILD_ARTIFACTSTAGINGDIRECTORY}"/oas2apigee-artifacts/resources
+        cp -r resources/* "${BUILD_ARTIFACTSTAGINGDIRECTORY}"/oas2apigee-artifacts/resources
+    fi
 }
 
 [[ "${0}" == "${BASH_SOURCE[0]}" ]] && main "${*}"
