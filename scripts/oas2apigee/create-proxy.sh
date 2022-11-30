@@ -2,25 +2,16 @@
 
 main() {
     readonly ADO_DEBUG_CMD="##[debug]"
+    readonly target_url_ref=propertyset."${PROPERTYSETNAME}".target_url
     echo "${ADO_DEBUG_CMD}"creating "${PROXYNAME}" API proxy..
-    if [[ -z "${INITIALTARGETENDPOINT}" ]]; then
-        echo "${ADO_DEBUG_CMD}"target endpoint: https://"$(grep -m 1 '\- url' oas/"${OASFILENAME}" | cut -d/ -f3)"
-        ~/.apigeecli/bin/apigeecli apis create openapi \
-            -o "${ORG}" \
-            -a "${SA_PATH}" \
-            -n "${PROXYNAME}" \
-            -f oas/"${OASFILENAME}" \
-            --add-cors | jq >"${PROXYNAME}".json
-    else
-        echo "${ADO_DEBUG_CMD}"target endpoint: "${INITIALTARGETENDPOINT}"
-        ~/.apigeecli/bin/apigeecli apis create openapi \
-            -o "${ORG}" \
-            -a "${SA_PATH}" \
-            -n "${PROXYNAME}" \
-            -f oas/"${OASFILENAME}" \
-            --target-url "${INITIALTARGETENDPOINT}" \
-            --add-cors | jq >"${PROXYNAME}".json
-    fi
+    echo "${ADO_DEBUG_CMD}"target endpoint ref: "${target_url_ref}"
+    ~/.apigeecli/bin/apigeecli apis create openapi \
+        --org "${ORG}" \
+        --account "${SA_PATH}" \
+        --name "${PROXYNAME}" \
+        --oasfile oas/"${OASFILENAME}" \
+        --target-url-ref "${target_url_ref}" \
+        --add-cors | jq >"${PROXYNAME}".json
 
     jq <"${PROXYNAME}".json
 }

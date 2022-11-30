@@ -60,6 +60,13 @@ jobs:
                 GCP_SA: $(gcpServiceAccount)
 
             - task: Bash@3
+              displayName: Create Property Set Resource
+              inputs:
+                filePath: $(Framework.Config.PathToScripts)/oas2apigee/property-sets-manager.sh
+              env:
+                SA_PATH: ./sa.json
+
+            - task: Bash@3
               displayName: Deploy API Proxy
               inputs:
                 filePath: $(Framework.Config.PathToScripts)/oas2apigee/deploy-proxy.sh
